@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grading Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .container-custom {
+            max-width: 900px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        .grade-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .grade-big {
+            font-size: 5rem;
+            font-weight: 800;
+        }
+        .marks-display {
+            font-size: 2rem;
+            margin-top: 15px;
+            opacity: 0.9;
+        }
+        .text-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+        }
+        .keyword-badge {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin: 4px;
+            font-size: 0.9rem;
+        }
+        .missing-badge {
+            background: #ffe7e7;
+            color: #cc0000;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container container-custom">
+        <h2 class="text-center mb-4"><i class="fas fa-chart-bar"></i> Grading Results</h2>
+
+        {% if warning %}
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i> {{ warning }}
+        </div>
+        {% endif %}
+
+        <div class="grade-card">
+            <div class="grade-big">{{ grade }}</div>
+            <div>Similarity: {{ similarity }}%</div>
+            <div class="marks-display">Marks: {{ marks }}/100</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5><i class="fas fa-user-graduate"></i> Student Answer</h5>
+                <div class="text-box">{{ student_text }}</div>
+            </div>
+            <div class="col-md-6">
+                <h5><i class="fas fa-chalkboard-teacher"></i> Expected Answer</h5>
+                <div class="text-box">{{ teacher_text }}</div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h5><i class="fas fa-check-circle text-success"></i> Matched Keywords ({{ matched_keywords | length }})</h5>
+            {% if matched_keywords %}
+                {% for k in matched_keywords %}
+                <span class="keyword-badge">{{ k }}</span>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No matching keywords found</p>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+            <h5><i class="fas fa-times-circle text-danger"></i> Missing Keywords ({{ missing_keywords | length }})</h5>
+            {% if missing_keywords %}
+                {% for k in missing_keywords %}
+                <span class="keyword-badge missing-badge">{{ k }}</span>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Perfect match! All keywords present.</p>
+            {% endif %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="/" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                <i class="fas fa-redo"></i> Grade Another
+            </a>
+            <a href="/dashboard" class="btn btn-outline-secondary ms-2">
+                <i class="fas fa-chart-line"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

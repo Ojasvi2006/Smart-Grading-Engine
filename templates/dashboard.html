@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Analytics Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #f4f6f9;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+    canvas {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 40px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-4 text-center">📊 Student Performance Dashboard</h1>
+    <div class="text-center mb-4">
+      <a href="/" class="btn btn-primary me-2">🏠 Home</a>
+      <a href="/export/csv" class="btn btn-outline-secondary">⬇️ Export CSV</a>
+    </div>
+
+    <h4>Grade Distribution</h4>
+    <canvas id="gradeChart"></canvas>
+
+    <h4>Average Marks by Student</h4>
+    <canvas id="studentChart"></canvas>
+
+    <h4>Class Progress Over Time</h4>
+    <canvas id="progressChart"></canvas>
+<script>
+  // Convert Python dicts/lists safely to JSON for JS
+  const grades = {{ by_grade | tojson | safe }};
+  const gradeLabels = Object.keys(grades);
+  const gradeData = Object.values(grades);
+
+  new Chart(document.getElementById('gradeChart'), {
+    type: 'pie',
+    data: {
+      labels: gradeLabels,
+      datasets: [{
+        data: gradeData,
+        backgroundColor: ['#667eea', '#764ba2', '#a78bfa', '#c084fc', '#d8b4fe']
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: 'Grade Distribution' }
+      }
+    }
+  });
+
+  const students = {{ avg_by_student | tojson | safe }};
+  new Chart(document.getElementById('studentChart'), {
+    type: 'bar',
+    data: {
+      labels: students.map(s => s.student),
+      datasets: [{
+        label: 'Average Marks',
+        data: students.map(s => s.avg),
+        backgroundColor: '#667eea'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Average Marks by Student' }
+      },
+      scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+
+  const timeData = {{ time_series | tojson | safe }};
+  new Chart(document.getElementById('progressChart'), {
+    type: 'line',
+    data: {
+      labels: timeData.map(d => d.date),
+      datasets: [{
+        label: 'Average Marks Over Time',
+        data: timeData.map(d => d.avg_marks),
+        borderColor: '#764ba2',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Class Progress Over Time' }
+      },
+      scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+</script>
+
+  </div>
+</body>
+</html>

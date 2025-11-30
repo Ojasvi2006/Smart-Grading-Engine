@@ -1,0 +1,4 @@
+Flask==3.0.0
+SQLAlchemy==2.0.0
+Werkzeug==3.0.0
+mistralai==1.0.0
